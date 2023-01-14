@@ -1,0 +1,3 @@
+Tea:7
+Hot coffee:1
+Ice Tea:2

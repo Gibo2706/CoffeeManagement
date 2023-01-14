@@ -1,6 +1,7 @@
 import os
 from costumer import view_all_drinks, place_order, pay_for_order, save_to_receipt, update_stock
-
+import matplotlib.pyplot as plt
+import datetime
 
 def launch_manager_form():
     while(True):
@@ -14,7 +15,8 @@ def launch_manager_form():
         print("7. Change the price of an item")
         print("8. Pay for order")
         print("9. Trasfer money")
-        print("10. Exit")
+        print("10. Statistics")
+        print("11. Exit")
         choice = input("Enter your choice: ")
         if choice == "1":
             order_more_items()
@@ -35,6 +37,8 @@ def launch_manager_form():
         elif choice == "9":
             transfer_money()
         elif choice == "10":
+            create_statistics()
+        elif choice == "11":
             break
         else:
             print("Invalid choice. Exiting...")
@@ -231,3 +235,37 @@ def view_profit():
                 for line in f:
                     profit += float(line)
     print(f"Profit for this month is ${profit}")
+
+
+def create_statistics():
+    now = datetime.datetime.now()
+    day = now.strftime("%d")
+    statistics_path = "res/files/statistics" + day + ".txt"
+    if not os.path.exists(statistics_path):
+        with open(statistics_path, "w") as f:
+            pass
+    item_count = {}
+    for filename in os.listdir("res/receipts"):
+        if filename.startswith("receipt"):
+            with open(os.path.join("res/receipts", filename)) as f:
+                lines = f.readlines()
+                for line in lines:
+                    if line.strip() == "Paid":
+                        break
+                    name, price = line.strip().split(":")
+                    if name in item_count:
+                        item_count[name] += 1
+                    else:
+                        item_count[name] = 1
+    with open(statistics_path, "w") as f:
+        for item, count in item_count.items():
+            f.write(f"{item}:{count}\n")
+
+    items = list(item_count.keys())
+    counts = list(item_count.values())
+
+    plt.plot(items, counts)
+    plt.xlabel('Item')
+    plt.ylabel('Count')
+    plt.title('Statistics')
+    plt.show()
