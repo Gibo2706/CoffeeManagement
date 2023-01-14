@@ -1,0 +1,10 @@
+Hot coffee:40
+Tea:30
+Ice Tea:60
+Coke:70
+Pepsi:65
+Fanta:70
+Sprite:70
+Beer:50
+Water:20
+Hot chocolate:50
