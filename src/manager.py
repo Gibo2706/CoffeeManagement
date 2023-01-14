@@ -52,7 +52,7 @@ def order_more_items():
             name, price = line.strip().split(":")
             if name == item:
                 item_exists = True
-                price = float(price)
+                priceB = float(price)
                 break
     if not item_exists:
         print(f"{item} is not listed in pricesForItems.txt.")
@@ -62,7 +62,7 @@ def order_more_items():
         return
     with open("res/money/forOrders.txt", "r") as f:
         money = float(f.read())
-    if money < price * int(quantity):
+    if money < priceB * int(quantity):
         print("Not enough money in forOrders.txt.")
         return
     if not os.path.exists("res/files/items.txt"):
@@ -70,24 +70,28 @@ def order_more_items():
         return
     with open("res/files/items.txt", "r") as f:
         lines = f.readlines()
+    created = False
     with open("res/files/items.txt", "w") as f:
         for line in lines:
             name, price, stock = line.strip().split(":")
             if name == item:
                 stock = str(int(stock) + int(quantity))
-                f.write(f"{name}:{price}:{stock}\n")
-                update_money_for_orders(-price * int(quantity))
+                update_money_for_orders(-priceB * int(quantity))
                 print(f"{quantity} units of {item} have been ordered.")
-                return
-        f.write(f"{item}:{price}:{quantity}\n")
-        update_money_for_orders(-price * int(quantity))
-        print(f"{quantity} units of {item} have been ordered.")
+                f.write(f"{name}:{price}:{stock}\n")
+                created = True
+            else:
+                f.write(line)
+        if not created:
+            f.write(f"{item}:{price}:{quantity}\n")
+            update_money_for_orders(-priceB * int(quantity))
+            print(f"{quantity} units of {item} have been ordered.")
 
 
 def update_money_for_orders(amount):
     if not os.path.exists("res/money/forOrders.txt"):
-        print("forOrders.txt does not exist.")
-        return
+        with open("res/money/forOrders.txt", "w") as f:
+            f.write("0")
     with open("res/money/forOrders.txt", "r") as f:
         money = float(f.read())
     money += amount
@@ -119,6 +123,10 @@ def change_price():
 
 
 def transfer_money():
+    # if profit does not exist, create it
+    if not os.path.exists("res/money/profit.txt"):
+        with open("res/money/profit.txt", "w") as f:
+            f.write("0")
     with open("res/money/profit.txt", "r") as f:
         profit = float(f.read())
     transfer_amount = float(input("Enter the amount you want to transfer: "))
@@ -128,6 +136,9 @@ def transfer_money():
     profit -= transfer_amount
     with open("res/money/profit.txt", "w") as f:
         f.write(str(profit))
+    if not os.path.exists("res/money/forOrders.txt"):
+        with open("res/money/forOrders.txt", "w") as f:
+            f.write("0")
     with open("res/money/forOrders.txt", "r") as f:
         money = float(f.read())
     money += transfer_amount
@@ -143,21 +154,50 @@ def view_all_receipts():
         return
     for filename in os.listdir(receipts_path):
         if filename.startswith("receipt"):
+            paid = False
+            summary = 0
             with open(os.path.join(receipts_path, filename)) as f:
                 lines = f.readlines()
                 print(f"Receipt {filename}:")
                 for line in lines:
+                    if line.strip() == "Paid":
+                        paid = True
+                        break
                     name, price = line.strip().split(":")
+                    priceOfItem = float(price)
                     print(f"{name} - ${price}")
-                paid = input(f"Is receipt {filename} paid (y/n)? ")
-                if paid.lower() == "y":
-                    update_profit(sum(float(x.split(':')[1]) for x in lines))
+                if paid:
                     print(f"Receipt {filename} is paid.")
+                    for line in lines:
+                        if line.strip() == "Paid":
+                            break
+                        name, price = line.strip().split(":")
+                        summary += calculate_profit(name, float(price))
+                    update_profit(summary)
                 else:
                     print(f"Receipt {filename} is not paid.")
 
 
+def calculate_profit(name, priceOfItem):
+    with open("res/files/items.txt", "r") as f:
+        for line in f:
+            item_name, item_price, stock = line.strip().split(":")
+            if item_name == name:
+                priceOfItemStock = float(item_price)
+                break
+    with open("res/files/pricesForItems.txt", "r") as f:
+        for line in f:
+            item_name, item_price = line.strip().split(":")
+            if item_name == name:
+                priceOfItemStock = float(item_price)
+                break
+    return priceOfItem - priceOfItemStock
+
+
 def update_profit(amount):
+    if not os.path.exists("res/money/profit.txt"):
+        with open("res/money/profit.txt", "w") as f:
+            f.write("0")
     with open("res/money/profit.txt", "r") as f:
         profit = float(f.read())
     profit += amount
@@ -166,12 +206,11 @@ def update_profit(amount):
 
 
 
-
 def remove_items():
     item = input("Enter the name of the item you want to remove: ")
-    with open("items.txt", "r") as f:
+    with open("res/files/items.txt", "r") as f:
         lines = f.readlines()
-    with open("items.txt", "w") as f:
+    with open("res/files/items.txt", "w") as f:
         for line in lines:
             name, price, stock = line.strip().split(":")
             if name != item:

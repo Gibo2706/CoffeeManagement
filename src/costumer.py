@@ -49,7 +49,7 @@ def save_to_receipt(name, price, receiptNumber):
 
 
 def pay_for_order():
-    if not os.path.exists("receipt.txt"):
+    if not os.path.exists(f"res/receipts/receipt{receiptNumber}.txt"):
         print("No order to pay for.")
         return
 
@@ -65,6 +65,8 @@ def pay_for_order():
         if float(payment) >= total_price:
             change = float(payment) - total_price
             print(f"Thank you for your payment. Your change is {change} RSD.")
+            with open(f"res/receipts/receipt{receiptNumber}.txt", "a") as f:
+                f.write("Paid\n")
             save_to_file(total_price)
             return
         else:
