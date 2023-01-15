@@ -163,6 +163,9 @@ def view_all_receipts():
             with open(os.path.join(receipts_path, filename)) as f:
                 lines = f.readlines()
                 print(f"Receipt {filename}:")
+                if lines.__contains__("checked"):
+                    print("This receipt has already been checked.")
+                    continue
                 for line in lines:
                     if line.strip() == "Paid":
                         paid = True
@@ -180,6 +183,9 @@ def view_all_receipts():
                     update_profit(summary)
                 else:
                     print(f"Receipt {filename} is not paid.")
+            with open(os.path.join(receipts_path, filename), 'a') as f:
+                f.write("checked")
+
 
 
 def calculate_profit(name, priceOfItem):

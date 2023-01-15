@@ -1,0 +1,8 @@
+Hot coffee:150
+Tea:100
+Beer:220
+Pepsi:170
+Water:110
+Hot chocolate:150
+Paid
+checked
