@@ -258,6 +258,8 @@ def create_statistics():
                 for line in lines:
                     if line.strip() == "Paid":
                         break
+                    if line.strip() == "checked":
+                        break
                     name, price = line.strip().split(":")
                     if name in item_count:
                         item_count[name] += 1
