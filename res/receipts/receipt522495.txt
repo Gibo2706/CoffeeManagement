@@ -1,0 +1,6 @@
+Tea:100
+Ice Tea:180
+Beer:220
+Coke:170
+Paid
+checked

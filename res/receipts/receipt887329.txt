@@ -1,0 +1,4 @@
+Tea:100
+Ice Tea:180
+Paid
+checked

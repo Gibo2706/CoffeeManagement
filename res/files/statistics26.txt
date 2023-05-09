@@ -1,0 +1,8 @@
+Coke:3
+Tea:12
+Beer:3
+Hot coffee:2
+Pepsi:3
+Water:2
+Hot chocolate:1
+Ice Tea:5

@@ -1,0 +1,5 @@
+Water:110
+Pepsi:170
+Pepsi:170
+Paid
+checked

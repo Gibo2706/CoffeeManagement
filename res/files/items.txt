@@ -1,8 +1,8 @@
-Hot coffee:150:98
-Tea:100:97
-Ice Tea:180:169
-Beer:220:15
-Coke:170:49
-Pepsi:170:29
-Water:110:399
-Hot chocolate:150:19
+Hot coffee:150:97
+Tea:100:95
+Ice Tea:180:167
+Beer:210:14
+Coke:170:47
+Pepsi:170:27
+Water:110:398
+Hot chocolate:150:18

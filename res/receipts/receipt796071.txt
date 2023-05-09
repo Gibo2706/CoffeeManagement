@@ -1,0 +1,5 @@
+Beer:220
+Beer:220
+Hot coffee:150
+Paid
+checked
